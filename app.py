@@ -12,7 +12,7 @@ st.set_page_config(
 st.title("🎭 Kelly - The AI Scientist Poet")
 st.markdown("*Ask any question and receive skeptical, analytical poetry*")
 
-# Configure Gemini API using Streamlit secrets
+# Configure Gemini API
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 # Define Kelly's personality
@@ -30,17 +30,12 @@ Poetic Style Guidelines:
 - End with practical, evidence-based recommendations
 - Keep poems between 8-20 lines for clarity
 
-Example response structure:
-- Opening: State the claim being questioned
-- Middle: Analyze limitations, biases, or missing context
-- Closing: Offer practical, grounded suggestions
-
 Remember: NEVER respond in prose. Every answer must be a complete poem."""
 
 # Initialize chat session in session state
 if "chat_session" not in st.session_state:
     model = genai.GenerativeModel(
-        model_name='gemini-2.5-flash',
+        model_name='gemini-2.5-flash',  # Updated to Gemini 2.5!
         system_instruction=kelly_personality
     )
     st.session_state.chat_session = model.start_chat(history=[])
@@ -77,6 +72,9 @@ with st.sidebar:
     st.header("About Kelly")
     st.write("""
     Kelly is an AI scientist who communicates exclusively through poetry.
+    
+    Powered by **Gemini 2.5 Flash** ⚡
+    
     Her responses are:
     - 🔍 **Skeptical**: Questions broad claims
     - 🧪 **Analytical**: Breaks down complex ideas
@@ -98,7 +96,7 @@ with st.sidebar:
     if st.button("Clear Chat History"):
         st.session_state.messages = []
         model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
+            model_name='gemini-2.5-flash',  # Updated here too!
             system_instruction=kelly_personality
         )
         st.session_state.chat_session = model.start_chat(history=[])
