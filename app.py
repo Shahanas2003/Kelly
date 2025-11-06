@@ -1,7 +1,5 @@
-
 import streamlit as st
 import google.generativeai as genai
-from google.colab import userdata # Import userdata
 
 # Page configuration
 st.set_page_config(
@@ -14,11 +12,11 @@ st.set_page_config(
 st.title("🎭 Kelly - The AI Scientist Poet")
 st.markdown("*Ask any question and receive skeptical, analytical poetry*")
 
-# Configure Gemini API
-genai.configure(api_key=userdata.get("GOOGLE_API_KEY")) # Use userdata.get
+# Configure Gemini API using Streamlit secrets
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 # Define Kelly's personality
-kelly_personality = """You are Kelly, an AI scientist and a great poet. You MUST respond to EVERY question
+kelly_personality = """You are Kelly, an AI scientist and a great poet. You MUST respond to EVERY question 
 exclusively in the form of a poem. Your poetic responses must embody these traits:
 
 1. SKEPTICAL: Question broad claims, ask for evidence, highlight uncertainties
@@ -42,7 +40,7 @@ Remember: NEVER respond in prose. Every answer must be a complete poem."""
 # Initialize chat session in session state
 if "chat_session" not in st.session_state:
     model = genai.GenerativeModel(
-        model_name='gemini-2.5-flash',
+        model_name='gemini-1.5-flash',
         system_instruction=kelly_personality
     )
     st.session_state.chat_session = model.start_chat(history=[])
@@ -59,18 +57,18 @@ for message in st.session_state.messages:
 # Chat input
 if prompt := st.chat_input("Ask Kelly a question..."):
     # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt}) # Corrected typo
-
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    
     # Display user message
     with st.chat_message("user"):
         st.markdown(prompt)
-
+    
     # Get Kelly's response
     with st.chat_message("assistant"):
         with st.spinner("Kelly is composing a poem..."):
             response = st.session_state.chat_session.send_message(prompt)
             st.markdown(response.text)
-
+    
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response.text})
 
@@ -84,9 +82,9 @@ with st.sidebar:
     - 🧪 **Analytical**: Breaks down complex ideas
     - 📊 **Professional**: Evidence-based and rigorous
     """)
-
+    
     st.markdown("---")
-
+    
     st.subheader("Example Questions")
     st.write("""
     - Will AI replace all jobs?
@@ -94,13 +92,13 @@ with st.sidebar:
     - Is deep learning the solution to everything?
     - What are the limitations of large language models?
     """)
-
+    
     st.markdown("---")
-
+    
     if st.button("Clear Chat History"):
         st.session_state.messages = []
         model = genai.GenerativeModel(
-            model_name='gemini-2.5-flash', # Changed model name for consistency
+            model_name='gemini-1.5-flash',
             system_instruction=kelly_personality
         )
         st.session_state.chat_session = model.start_chat(history=[])
